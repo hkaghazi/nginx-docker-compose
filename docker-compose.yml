@@ -1,0 +1,26 @@
+services:
+  nginx:
+    container_name: nginx
+    restart: unless-stopped
+    image: nginx
+    networks:
+      - backend_default
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+  
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    command: certonly --webroot --force-renewal --email hafezkaghazi@gmail.com --agree-tos --cert-name pgadmin.my.asbdavani.app -w /var/www/certbot -d pgadmin.my.asbdavani.app --cert-name api.preview.my.asbdavani.app -w /var/www/certbot -d api.preview.my.asbdavani.app --cert-name preview.my.asbdavani.app -w /var/www/certbot -d preview.my.asbdavani.app 
+
+networks:
+  backend_default:
+    external: true
